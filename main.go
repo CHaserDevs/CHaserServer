@@ -11,8 +11,10 @@ import (
 )
 
 func main(){
-  a := app.New()
-  w := a.NewWindow("CHaserServer")
+  server := app.New()
+  main_window := server.NewWindow("CHaserServer | Main")
+  main_window.Resize(fyne.NewSize(1280, 720))
 
-	w.ShowAndRun() 
+
+	main_window.ShowAndRun() 
 }
