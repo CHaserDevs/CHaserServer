@@ -1,76 +1,38 @@
 package utils
 
-import (
-	"fmt"
-	"log"
-	"os"
+import(
+  "io"
+  "log"
 )
 
-/* Summary
-Here is Logger system for output
-
-LogLevel:
-  Error
-  Warn
-  Info
-  Debug
-
-It need log level in init this log system
-
-Please import in all code and always output log with this.
-*/
-
-type Logger struct {
-	*log.Logger
-	level LogLevel
+type CustomLogger struct {
+  infoLog     *log.Logger
+  warningLog  *log.Logger
+  importantLog *log.Logger
+  errorLog    *log.Logger
 }
 
-type LogLevel int
-
-const (
-	DEBUG LogLevel = iota
-	INFO
-	WARN
-	ERROR
-)
-
-func NewLogger(level LogLevel) *Logger {
-	return &Logger{
-		Logger: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile),
-		level:  level,
-	}
+func NewCustomLogger(output io.Writer) *CustomLogger {
+  return &CustomLogger{
+    infoLog:     log.New(output, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile),
+    warningLog:  log.New(output, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile),
+    importantLog: log.New(output, "IMPORTANT: ", log.Ldate|log.Ltime|log.Lshortfile),
+    errorLog:    log.New(output, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile),
+  }
 }
 
-func (l *Logger) log(level LogLevel, msg string) {
-	if level >= l.level {
-		var prefix string
-		switch level {
-		case DEBUG:
-			prefix = "DEBUG"
-		case INFO:
-			prefix = "INFO"
-		case WARN:
-			prefix = "WARN"
-		case ERROR:
-			prefix = "ERROR"
-		}
-		l.Logger.SetPrefix(fmt.Sprintf("[%s] ", prefix))
-		l.Logger.Println(msg)
-	}
+func (l *CustomLogger) Info(message string) {
+  l.infoLog.Println(message)
 }
 
-func (l *Logger) Debug(msg string) {
-	l.log(DEBUG, msg)
+func (l *CustomLogger) Warning(message string) {
+  l.warningLog.Println(message)
 }
 
-func (l *Logger) Info(msg string) {
-	l.log(INFO, msg)
+func (l *CustomLogger) Important(message string) {
+  l.importantLog.Println(message)
 }
 
-func (l *Logger) Warn(msg string) {
-	l.log(WARN, msg)
-}
-
-func (l *Logger) Error(msg string) {
-	l.log(ERROR, msg)
+func (l *CustomLogger) Error(err error) {
+  l.errorLog.Println(err)
 }

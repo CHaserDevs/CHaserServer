@@ -1,20 +1,30 @@
 package main
 
 import (
-
-	// "CHaserServer/util"
-
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	// "fyne.io/fyne/v2/container"
-	// "fyne.io/fyne/v2/widget"
+  "os"
+  "io"
+  "log"
+	// "CHaserServer/game"
+	// "CHaserServer/network"
+  "CHaserServer/utils"
 )
 
 func main(){
-  server := app.New()
-  main_window := server.NewWindow("CHaserServer | Main")
-  main_window.Resize(fyne.NewSize(1280, 720))
+  file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+  if err != nil {
+    log.Fatal(err)
+  }
+  defer file.Close()
+
+  logger := utils.NewCustomLogger(io.MultiWriter(file, os.Stdout))
+
+  logger.Info("This is an information message")
+
+  logger.Warning("This is a warning message")
+
+  logger.Important("This is an important message")
+
+  logger.Error(err)
 
 
-	main_window.ShowAndRun() 
 }
